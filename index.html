@@ -130,7 +130,7 @@
             let contents = document.getElementById("studentList");
             const xhr = new XMLHttpRequest();
             
-            xhr.open("GET", "https://672b298a976a834dd025df28.mockapi.io/students");
+            xhr.open("GET", "https://mockapi.io/clone/672b298a976a834dd025df29");
             xhr.setRequestHeader("content-type", "application/json");
             xhr.send();
             
@@ -155,7 +155,7 @@
                 saveUpdatedData(stuid.dataset.id);
             } else {
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "https://672b298a976a834dd025df28.mockapi.io/students");
+                xhr.open("POST", "https://mockapi.io/clone/672b298a976a834dd025df29");
                 xhr.setRequestHeader("content-type", "application/json; charset=UTF-8");
                 const data = { stuid: stuid.value, name: name.value, age: age.value, gender: gender.value, major: major.value };
                 xhr.send(JSON.stringify(data));
@@ -173,7 +173,7 @@
     
         function updateData(id) {
             const xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://672b298a976a834dd025df28.mockapi.io/students/" + id);
+            xhr.open("GET", "https://mockapi.io/clone/672b298a976a834dd025df29" + id);
             xhr.setRequestHeader("content-type", "application/json");
             xhr.send();
     
@@ -201,7 +201,7 @@
             let gender = document.getElementById("gender");
             let major = document.getElementById("major");
             const xhr = new XMLHttpRequest();
-            xhr.open("PUT", "https://672b298a976a834dd025df28.mockapi.io/students/" + id);
+            xhr.open("PUT", "https://mockapi.io/clone/672b298a976a834dd025df29" + id);
             xhr.setRequestHeader("content-type", "application/json; charset=UTF-8");
             const data = { stuid: stuid.value, name: name.value, age: age.value, gender: gender.value, major: major.value };
             xhr.send(JSON.stringify(data));
@@ -218,7 +218,7 @@
     
         function deleteData(id) {
             const xhr = new XMLHttpRequest();
-            xhr.open("DELETE", "https://672b298a976a834dd025df28.mockapi.io/students/" + id);
+            xhr.open("DELETE", "https://mockapi.io/clone/672b298a976a834dd025df29" + id);
             xhr.send();
     
             xhr.onload = () => {
