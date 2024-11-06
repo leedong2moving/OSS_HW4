@@ -45,93 +45,58 @@
             color: #ffffff;
             position: relative;
         }
-        .card::before {
+        .card::before, .card::after {
             content: "";
             position: absolute;
+            border-radius: 50%;
+            z-index: -1;
+        }
+        .card::before {
             top: -20px;
             right: -20px;
             width: 60px;
             height: 60px;
             background: rgba(0, 102, 255, 0.2);
-            border-radius: 50%;
-            z-index: -1;
         }
         .card::after {
-            content: "";
-            position: absolute;
             bottom: -20px;
             left: -20px;
             width: 80px;
             height: 80px;
             background: rgba(243, 156, 18, 0.2);
-            border-radius: 50%;
-            z-index: -1;
         }
         .card-body {
             padding: 2rem;
         }
-        .card-title {
-            font-weight: bold;
-            font-size: 1.5rem;
-            color: #ffffff;
-        }
-        .card-text {
-            color: #bbbbbb;
-        }
-        .btn-primary {
-            background-color: #0066ff;
-            border: none;
+        .btn-primary, .btn-danger, .btn-success {
             border-radius: 20px;
-        }
-        .btn-danger {
-            background-color: #e74c3c;
             border: none;
-            border-radius: 20px;
         }
-        .btn-warning {
-            background-color: #444;
-            border: none;
-            border-radius: 20px;
-            color: #f0f0f0;
-        }
-        .btn-success {
-            background-color: #0066ff;
-            border: none;
-            border-radius: 20px;
-            color: #f0f0f0;
-        }
+        .btn-primary { background-color: #0066ff; }
+        .btn-danger { background-color: #e74c3c; }
+        .btn-success { background-color: #0066ff; color: #f0f0f0; }
         .form-control, .form-select {
             background-color: #333;
             color: #ffffff;
-            border: none;
             border-radius: 15px;
         }
-        .form-control::placeholder {
-            color: #aaaaaa;
-        }
-        #studentList {
-            margin-top: 3rem;
-        }
-        .icon-container {
-            font-size: 3rem;
-            color: #0066ff;
-            margin-bottom: 1rem;
-        }
+        .form-control::placeholder { color: #aaaaaa; }
+        #studentList { margin-top: 3rem; }
     </style>
     <script>
         window.onload = function() {
-            let btnStu = document.getElementById("btnStu");
-            let btnAdd = document.getElementById("btnAdd");
+            const btnStu = document.getElementById("btnStu");
+            const btnAdd = document.getElementById("btnAdd");
             btnStu.addEventListener("click", getStudents);
             btnAdd.addEventListener("click", postData);
         }
-    
+
         function getStudents() {
-            let contents = document.getElementById("studentList");
+            const contents = document.getElementById("studentList");
             const xhr = new XMLHttpRequest();
             
             xhr.open("GET", "https://672b298a976a834dd025df28.mockapi.io/students");
-            xhr.setRequestHeader("content-type", "application/json");
+            xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send();
             
             xhr.onload = () => {
@@ -143,23 +108,23 @@
                 }
             }
         }
-    
+
         function postData() {
-            let stuid = document.getElementById("stuid");
-            let name = document.getElementById("name");
-            let age = document.getElementById("age");
-            let gender = document.getElementById("gender");
-            let major = document.getElementById("major");
-    
+            const stuid = document.getElementById("stuid");
+            const name = document.getElementById("name");
+            const age = document.getElementById("age");
+            const gender = document.getElementById("gender");
+            const major = document.getElementById("major");
+
             if (document.getElementById("btnAdd").innerText === "수정하기") {
                 saveUpdatedData(stuid.dataset.id);
             } else {
                 const xhr = new XMLHttpRequest();
                 xhr.open("POST", "https://672b298a976a834dd025df28.mockapi.io/students");
-                xhr.setRequestHeader("content-type", "application/json; charset=UTF-8");
+                xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
                 const data = { stuid: stuid.value, name: name.value, age: age.value, gender: gender.value, major: major.value };
                 xhr.send(JSON.stringify(data));
-    
+
                 xhr.onload = () => {
                     if (xhr.status === 201) {
                         resetForm();
@@ -170,13 +135,13 @@
                 }
             }
         }
-    
+
         function updateData(id) {
             const xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://672b298a976a834dd025df28.mockapi.io/students" + id);
-            xhr.setRequestHeader("content-type", "application/json");
+            xhr.open("GET", `https://672b298a976a834dd025df28.mockapi.io/students/${id}`);
+            xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send();
-    
+
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     const student = JSON.parse(xhr.response);
@@ -186,26 +151,25 @@
                     document.getElementById("gender").value = student.gender;
                     document.getElementById("major").value = student.major;
                     document.getElementById("stuid").dataset.id = id;
-    
                     document.getElementById("btnAdd").innerText = "수정하기";
                 } else {
                     console.log(xhr.status, xhr.statusText);
                 }
             }
         }
-    
+
         function saveUpdatedData(id) {
-            let stuid = document.getElementById("stuid");
-            let name = document.getElementById("name");
-            let age = document.getElementById("age");
-            let gender = document.getElementById("gender");
-            let major = document.getElementById("major");
+            const stuid = document.getElementById("stuid");
+            const name = document.getElementById("name");
+            const age = document.getElementById("age");
+            const gender = document.getElementById("gender");
+            const major = document.getElementById("major");
             const xhr = new XMLHttpRequest();
-            xhr.open("PUT", "https://672b298a976a834dd025df28.mockapi.io/students" + id);
-            xhr.setRequestHeader("content-type", "application/json; charset=UTF-8");
+            xhr.open("PUT", `https://672b298a976a834dd025df28.mockapi.io/students/${id}`);
+            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
             const data = { stuid: stuid.value, name: name.value, age: age.value, gender: gender.value, major: major.value };
             xhr.send(JSON.stringify(data));
-    
+
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     resetForm();
@@ -215,12 +179,12 @@
                 }
             }
         }
-    
+
         function deleteData(id) {
             const xhr = new XMLHttpRequest();
-            xhr.open("DELETE", "https://672b298a976a834dd025df28.mockapi.io/students" + id);
+            xhr.open("DELETE", `https://672b298a976a834dd025df28.mockapi.io/students/${id}`);
             xhr.send();
-    
+
             xhr.onload = () => {
                 if (xhr.status === 200) {
                     getStudents();
@@ -229,8 +193,38 @@
                 }
             }
         }
+
+        function makeList(data) {
+            let str = "<div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center'>";
+            for (let i = 0; i < data.length; i++) {
+                str += `<div class='col mb-3'>
+                            <div class='card'>
+                                <div class='card-body text-center'>
+                                    <div class='icon-container'><i class='fas fa-user-graduate'></i></div>
+                                    <h5 class='card-title'>${data[i].name}</h5>
+                                    <p class='card-text'>Age: ${data[i].age}</p>
+                                    <p class='card-text'>Student ID: ${data[i].stuid}</p>
+                                    <p class='card-text'>Major: ${data[i].major}</p>
+                                    <p class='card-text'>Gender: ${data[i].gender}</p>
+                                    <button class='btn btn-primary me-2' onclick='updateData("${data[i].id}")'>Update</button>
+                                    <button class='btn btn-danger' onclick='deleteData("${data[i].id}")'>Delete</button>
+                                </div>
+                            </div>
+                        </div>`;
+            }
+            str += "</div>";
+            return str;
+        }
+
+        function resetForm() {
+            document.getElementById("stuid").value = "";
+            document.getElementById("name").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("gender").value = "";
+            document.getElementById("major").value = "";
+            document.getElementById("btnAdd").innerText = "저장하기";
+        }
     </script>
-    
 </head>
 
 <body>
