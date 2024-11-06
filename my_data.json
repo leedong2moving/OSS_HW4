@@ -1,0 +1,108 @@
+{
+  "students": [
+    {
+      "stuid": "21900104",
+      "name": "Tom",
+      "age": "26",
+      "gender": "Female",
+      "major": "Global Leadership",
+      "id": "e77e"
+    },
+    {
+      "stuid": 22000451,
+      "name": "Lucy",
+      "age": 25,
+      "major": "Management",
+      "gender": "male",
+      "id": "a382"
+    },
+    {
+      "stuid": 21700247,
+      "name": "Mary",
+      "age": 27,
+      "major": "Law",
+      "gender": "male",
+      "id": "4ab5"
+    },
+    {
+      "stuid": "21600490",
+      "name": "Dean",
+      "age": "28",
+      "gender": "Male",
+      "major": "Economy",
+      "id": "a320"
+    },
+    {
+      "stuid": 22300640,
+      "name": "Rose",
+      "age": 21,
+      "major": "Electronic Engineering",
+      "gender": "female",
+      "id": "1068"
+    },
+    {
+      "stuid": 22200341,
+      "name": "Naan",
+      "age": 22,
+      "major": "Design",
+      "gender": "male",
+      "id": "bf6d"
+    },
+    {
+      "stuid": 21800123,
+      "name": "Eric",
+      "age": 26,
+      "major": "Computer Science",
+      "gender": "male",
+      "id": "c499"
+    },
+    {
+      "stuid": 22200509,
+      "name": "Claudia",
+      "age": 22,
+      "major": "Psychology",
+      "gender": "female",
+      "id": "7913"
+    },
+    {
+      "stuid": 21600388,
+      "name": "Dasol",
+      "age": 28,
+      "major": "Law",
+      "gender": "female",
+      "id": "0fa5"
+    },
+    {
+      "stuid": "22400012",
+      "name": "Yunji",
+      "age": "20",
+      "gender": "Female",
+      "major": "Psychology",
+      "id": "6aab"
+    },
+    {
+      "stuid": 22000662,
+      "name": "Jihum",
+      "age": 24,
+      "major": "Machine Engineering",
+      "gender": "male",
+      "id": "0d25"
+    },
+    {
+      "id": "6a54",
+      "stuid": "22200222",
+      "name": "Naomi",
+      "age": "23",
+      "gender": "Male",
+      "major": "Management"
+    },
+    {
+      "stuid": "22200222",
+      "name": "Senyorita",
+      "age": "22",
+      "gender": "Male",
+      "major": "Management",
+      "id": "87e7"
+    }
+  ]
+}
