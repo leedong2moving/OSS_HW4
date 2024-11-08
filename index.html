@@ -9,7 +9,7 @@
     <style>
         body {
             background-color: #0b0b0d;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             color: #f0f0f0;
         }
         .navbar {
@@ -45,7 +45,8 @@
             color: #ffffff;
             position: relative;
         }
-        .card::before, .card::after {
+        .card::before,
+        .card::after {
             content: "";
             position: absolute;
             border-radius: 50%;
@@ -65,139 +66,147 @@
             height: 80px;
             background: rgba(243, 156, 18, 0.2);
         }
-        .card-body {
-            padding: 2rem;
-        }
-        .btn-primary, .btn-danger, .btn-success {
-            border-radius: 20px;
+        .btn {
             border: none;
+            border-radius: 20px;
         }
         .btn-primary { background-color: #0066ff; }
         .btn-danger { background-color: #e74c3c; }
+        .btn-warning { background-color: #444; color: #f0f0f0; }
         .btn-success { background-color: #0066ff; color: #f0f0f0; }
         .form-control, .form-select {
             background-color: #333;
             color: #ffffff;
+            border: none;
             border-radius: 15px;
         }
-        .form-control::placeholder { color: #aaaaaa; }
-        #studentList { margin-top: 3rem; }
+        .form-control::placeholder {
+            color: #aaaaaa;
+        }
+        #studentList {
+            margin-top: 3rem;
+        }
+        .icon-container {
+            font-size: 3rem;
+            color: #0066ff;
+            margin-bottom: 1rem;
+        }
     </style>
-    <script>
-        let selectedStudentId = null;
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Student Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="content-wrapper">
+        <h1 class="heading">Student Management</h1>
+        <p class="description">Easily manage student information with this simple, stylish application.</p>
+        <div class="card p-4 mb-4">
+            <h5 class="mb-3"><i class="fas fa-user-plus"></i> 학생 정보 추가</h5>
+            <input type="text" id="stuid" class="form-control mb-3" placeholder="Student ID">
+            <input type="text" id="name" class="form-control mb-3" placeholder="Name">
+            <input type="number" id="age" class="form-control mb-3" placeholder="Age">
+            <select id="gender" class="form-select mb-3">
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <select id="major" class="form-select mb-3">
+                <option value="">Select Major</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Life Science">Life Science</option>
+                <option value="Management">Management</option>
+                <option value="Law">Law</option>
+                <option value="Economy">Economy</option>
+                <option value="Electronic Engineering">Electronic Engineering</option>
+                <option value="Design">Design</option>
+                <option value="Psychology">Psychology</option>
+                <option value="Global Leadership">Global Leadership</option>
+                <option value="Machine Engineering">Machine Engineering</option>
+            </select>
+            <button id="btnAdd" class="btn btn-success">저장하기</button>
+        </div>
+        <button id="btnStu" class="btn btn-warning mb-3"><i class="fas fa-folder-open"></i> 학생데이터 가져오기</button>
+        <div id="studentList" class="mb-5 text-center"></div>
+    </div>
 
-        window.onload = function() {
-            const btnStu = document.getElementById("btnStu");
-            const btnAdd = document.getElementById("openAddModal");
-            btnStu.addEventListener("click", getStudents);
-            btnAdd.addEventListener("click", openAddModal);
-        };
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("btnStu").addEventListener("click", getStudents);
+            document.getElementById("btnAdd").addEventListener("click", handleSubmit);
+        });
+
+        const apiUrl = "https://672b298a976a834dd025df28.mockapi.io/students";
+
+        function handleRequest(method, url, callback, data = null) {
+            const xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = () => xhr.status === 200 || xhr.status === 201 ? callback(JSON.parse(xhr.responseText)) : console.error(xhr.status, xhr.statusText);
+            xhr.send(data ? JSON.stringify(data) : null);
+        }
 
         function getStudents() {
-            const contents = document.getElementById("studentList");
-            const xhr = new XMLHttpRequest();
-
-            xhr.open("GET", "https://672b298a976a834dd025df28.mockapi.io/students");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send();
-
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    const res = JSON.parse(xhr.response);
-                    contents.innerHTML = makeList(res);
-                } else {
-                    console.log(xhr.status, xhr.statusText);
-                }
-            };
+            handleRequest("GET", apiUrl, res => document.getElementById("studentList").innerHTML = makeList(res));
         }
 
-        function openAddModal() {
+        function handleSubmit() {
+            const id = document.getElementById("stuid").dataset.id;
+            id ? saveUpdatedData(id) : createData();
+        }
+
+        function createData() {
+            const data = getFormData();
+            handleRequest("POST", apiUrl, resetAndReload, data);
+        }
+
+        function updateData(id) {
+            handleRequest("GET", `${apiUrl}/${id}`, student => populateForm(student, id));
+        }
+
+        function saveUpdatedData(id) {
+            const data = getFormData();
+            handleRequest("PUT", `${apiUrl}/${id}`, resetAndReload, data);
+        }
+
+        function deleteData(id) {
+            handleRequest("DELETE", `${apiUrl}/${id}`, getStudents);
+        }
+
+        function resetAndReload() {
             resetForm();
-            selectedStudentId = null;
-            const modal = new bootstrap.Modal(document.getElementById('studentModal'));
-            modal.show();
-            document.getElementById("modalTitle").innerText = "Add New Student";
-            document.getElementById("saveStudent").innerText = "Add Student";
+            getStudents();
         }
 
-        function openEditModal(id) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("GET", `https://672b298a976a834dd025df28.mockapi.io/students/${id}`);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send();
-
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    const student = JSON.parse(xhr.response);
-                    document.getElementById("stuid").value = student.stuid;
-                    document.getElementById("name").value = student.name;
-                    document.getElementById("age").value = student.age;
-                    document.getElementById("gender").value = student.gender;
-                    document.getElementById("major").value = student.major;
-                    selectedStudentId = id;
-
-                    const modal = new bootstrap.Modal(document.getElementById('studentModal'));
-                    modal.show();
-                    document.getElementById("modalTitle").innerText = "Edit Student";
-                    document.getElementById("saveStudent").innerText = "Save Changes";
-                } else {
-                    console.log(xhr.status, xhr.statusText);
-                }
+        function getFormData() {
+            return {
+                stuid: document.getElementById("stuid").value,
+                name: document.getElementById("name").value,
+                age: document.getElementById("age").value,
+                gender: document.getElementById("gender").value,
+                major: document.getElementById("major").value
             };
         }
 
-        function saveStudent() {
-            const stuid = document.getElementById("stuid").value;
-            const name = document.getElementById("name").value;
-            const age = document.getElementById("age").value;
-            const gender = document.getElementById("gender").value;
-            const major = document.getElementById("major").value;
-
-            const data = { stuid, name, age, gender, major };
-
-            if (selectedStudentId) {
-                updateStudent(selectedStudentId, data);
-            } else {
-                addStudent(data);
-            }
-        }
-
-        function addStudent(data) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "https://672b298a976a834dd025df28.mockapi.io/students");
-            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-            xhr.send(JSON.stringify(data));
-
-            xhr.onload = () => {
-                if (xhr.status === 201) {
-                    closeModal();
-                    getStudents();
-                } else {
-                    console.log(xhr.status, xhr.statusText);
-                }
-            };
-        }
-
-        function updateStudent(id, data) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("PUT", `https://672b298a976a834dd025df28.mockapi.io/students/${id}`);
-            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
-            xhr.send(JSON.stringify(data));
-
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    closeModal();
-                    getStudents();
-                } else {
-                    console.log(xhr.status, xhr.statusText);
-                }
-            };
-        }
-
-        function closeModal() {
-            const modal = bootstrap.Modal.getInstance(document.getElementById('studentModal'));
-            modal.hide();
-            resetForm();
+        function populateForm(student, id) {
+            document.getElementById("stuid").value = student.stuid;
+            document.getElementById("name").value = student.name;
+            document.getElementById("age").value = student.age;
+            document.getElementById("gender").value = student.gender;
+            document.getElementById("major").value = student.major;
+            document.getElementById("stuid").dataset.id = id;
+            document.getElementById("btnAdd").innerText = "수정하기";
         }
 
         function resetForm() {
@@ -206,125 +215,9 @@
             document.getElementById("age").value = "";
             document.getElementById("gender").value = "";
             document.getElementById("major").value = "";
-        }
-
-        function makeList(data) {
-            let str = "<div class='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center'>";
-            for (let i = 0; i < data.length; i++) {
-                str += `<div class='col mb-3'>
-                            <div class='card'>
-                                <div class='card-body text-center'>
-                                    <div class='icon-container'><i class='fas fa-user-graduate'></i></div>
-                                    <h5 class='card-title'>${data[i].name}</h5>
-                                    <p class='card-text'>Age: ${data[i].age}</p>
-                                    <p class='card-text'>Student ID: ${data[i].stuid}</p>
-                                    <p class='card-text'>Major: ${data[i].major}</p>
-                                    <p class='card-text'>Gender: ${data[i].gender}</p>
-                                    <button class='btn btn-primary me-2' onclick='openEditModal("${data[i].id}")'>Update</button>
-                                    <button class='btn btn-danger' onclick='deleteData("${data[i].id}")'>Delete</button>
-                                </div>
-                            </div>
-                        </div>`;
-            }
-            str += "</div>";
-            return str;
-        }
-
-        function deleteData(id) {
-            const xhr = new XMLHttpRequest();
-            xhr.open("DELETE", `https://672b298a976a834dd025df28.mockapi.io/students/${id}`);
-            xhr.send();
-
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    getStudents();
-                } else {
-                    console.log(xhr.status, xhr.statusText);
-                }
-            };
+            document.getElementById("btnAdd").innerText = "저장하기";
+            delete document.getElementById("stuid").dataset.id;
         }
     </script>
-</head>
-
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Student Management</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Projects</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="content-wrapper">
-        <h1 class="heading">Student Management</h1>
-        <p class="description">Easily manage student information with this simple, stylish application.</p>
-        <button id="openAddModal" class="btn btn-success mb-4">Add New Student</button>
-        <button id="btnStu" class="btn btn-warning mb-3"><i class='fas fa-folder-open' style='font-size:20px;color:rgb(118, 118, 184)'></i> Load Students</button>
-        <div id="studentList" class="mb-5 text-center"></div>
-    </div>
-
-    <!-- Add/Edit Modal -->
-    <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalTitle">Add New Student</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <input type="text" id="stuid" class="form-control" placeholder="Student ID">
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" id="name" class="form-control" placeholder="Name">
-                    </div>
-                    <div class="mb-3">
-                        <input type="number" id="age" class="form-control" placeholder="Age">
-                    </div>
-                    <div class="mb-3">
-                        <select id="gender" class="form-select">
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <select id="major" class="form-select">
-                            <option value="">Select Major</option>
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Life Science">Life Science</option>
-                            <option value="Management">Management</option>
-                            <option value="Law">Law</option>
-                            <option value="Economy">Economy</option>
-                            <option value="Electronic Engineering">Electronic Engineering</option>
-                            <option value="Design">Design</option>
-                            <option value="Psychology">Psychology</option>
-                            <option value="Global Leadership">Global Leadership</option>
-                            <option value="Machine Engineering">Machine Engineering</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="saveStudent" class="btn btn-primary" onclick="saveStudent()">Add Student</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
